@@ -1,3 +1,7 @@
+# Video tutorial coming soon
+
+TODO
+
 # Installing the driver onto the Cerbo GX
 
 Plug USB stick into Cerbo
