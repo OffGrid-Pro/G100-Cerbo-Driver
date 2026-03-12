@@ -182,24 +182,31 @@ class G100_CLS_BASE(device.CustomName, switch_device.SwitchDevice):
             if state == 0x100:
                 # Normal operation
                 if hasattr(self, '_dbus'):
-                    self._dbus['/SwitchableOutput/0/Status'] = 0
-                    self._dbus['/SwitchableOutput/1/Status'] = 0
-                    self._dbus['/SwitchableOutput/2/Status'] = 0
+                    self._dbus['/SwitchableOutput/0/Status'] = 0x09
+                    self._dbus['/SwitchableOutput/1/Status'] = 0x80
+                    self._dbus['/SwitchableOutput/2/Status'] = 0x80
                     log.debug("Set auxiliary outputs to off state")
             elif state == 0x103:
                 # Warning state
                 if hasattr(self, '_dbus'):
-                    self._dbus['/SwitchableOutput/0/Status'] = 8
-                    self._dbus['/SwitchableOutput/1/Status'] = 8
-                    self._dbus['/SwitchableOutput/2/Status'] = 8
+                    self._dbus['/SwitchableOutput/0/Status'] = 0x09
+                    self._dbus['/SwitchableOutput/1/Status'] = 0x80 #! In the latest update victron have changed the mapping of the state codes so over import / export now dont show in ui :/
+                    self._dbus['/SwitchableOutput/2/Status'] = 0x80 #! Check git history for old code, was "channel tripped" but that now maps to "off"
                     log.debug("Set auxiliary outputs to warning state")
             elif state == 0x104:
                 # Alarm state
                 if hasattr(self, '_dbus'):
-                    self._dbus['/SwitchableOutput/0/Status'] = 2
-                    self._dbus['/SwitchableOutput/1/Status'] = 2
-                    self._dbus['/SwitchableOutput/2/Status'] = 2
+                    self._dbus['/SwitchableOutput/0/Status'] = 0x82
+                    self._dbus['/SwitchableOutput/1/Status'] = 0x82
+                    self._dbus['/SwitchableOutput/2/Status'] = 0x82
                     log.debug("Set auxiliary outputs to alarm state")
+            elif state == 0x105:
+                # State 4
+                if hasattr(self, '_dbus'):
+                    self._dbus['/SwitchableOutput/0/Status'] = 0x08
+                    self._dbus['/SwitchableOutput/1/Status'] = 0x08
+                    self._dbus['/SwitchableOutput/2/Status'] = 0x08
+                    log.debug("Set auxiliary outputs to disabled state")
         except Exception as e:
             log.error("Error updating outputs from state: %s", e)
 
