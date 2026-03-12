@@ -44,7 +44,7 @@ class SwitchDevice(ModbusDevice):
         assert self._dbus.add_path is not None, "D-Bus not initialized" # The type checker was annoying me
 
         # All outputs have these common paths
-        if writeable:
+        if writeable and f"{base}/State" not in self._dbus:
             self._dbus.add_path(
                 f"{base}/State",
                 default_value,
