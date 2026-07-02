@@ -8,8 +8,8 @@ mount -o remount,rw /
 
 # Symlink our files to /opt/victronenergy/dbus-modbus-client/
 echo "Creating symlinks for OGP_G100.py and switch_device.py..."
-ln -sf /data/venus-data/offgridpro/OGP_G100.py /opt/victronenergy/dbus-modbus-client/
-ln -sf /data/venus-data/offgridpro/switch_device.py /opt/victronenergy/dbus-modbus-client/
+ln -sf /data/offgridpro/OGP_G100.py /opt/victronenergy/dbus-modbus-client/
+ln -sf /data/offgridpro/switch_device.py /opt/victronenergy/dbus-modbus-client/
 
 # Add "import OGP_G100" to /opt/victronenergy/dbus-modbus-client/dbus-modbus-client.py if not already present
 echo "Ensuring OGP_G100 is imported in dbus-modbus-client.py..."
