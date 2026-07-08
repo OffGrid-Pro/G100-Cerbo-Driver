@@ -2,6 +2,7 @@ import logging
 import device
 import switch_device
 import probe
+from gi.repository import GLib
 from register import *
 
 # Absolutely misusing every part of the victron ui here, but as long as the correct info comes across it's fine.
@@ -223,12 +224,23 @@ class G100_CLS(G100_CLS_BASE):
         self._add_switchable_output(0, "Reset System", type=0, valid_types=0x1, writeable=True)
         self._add_switchable_output(1, "Auxiliary Output 1", type=1, valid_types=0x2, writeable=False)
         self._add_switchable_output(2, "Auxiliary Output 2", type=1, valid_types=0x2, writeable=False)
+        # occasionally read the register to force the device out of config mode if it is stuck there for some reason
+        GLib.timeout_add(2000, self._send_config_exit)
 
     def _on_output_changed(self, path, value):
         """Handle switchable output state changes"""
         if '/SwitchableOutput/0/State' in path and value == 1:
             self._handle_reset_button()
         return True
+
+    def _send_config_exit(self):
+        """if for whatever reason the device is still in config mode, kick it out by reading the id register"""
+        try:
+            self.read_modbus(0x0030, 1)
+            log.info("Read 0x0030 to force G100 out of config mode")
+        except Exception as e:
+            log.error("Error reading config-exit register: %s", e)
+        return False  # Do not repeat
 
     def _handle_reset_button(self):
         """Send reset command to device"""
