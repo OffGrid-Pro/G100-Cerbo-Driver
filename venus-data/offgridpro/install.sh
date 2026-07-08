@@ -10,6 +10,7 @@ mount -o remount,rw /
 echo "Creating symlinks for OGP_G100.py and switch_device.py..."
 ln -sf /data/offgridpro/OGP_G100.py /opt/victronenergy/dbus-modbus-client/
 ln -sf /data/offgridpro/switch_device.py /opt/victronenergy/dbus-modbus-client/
+ln -sf /data/offgridpro/Virtual_OGP_Device.py /opt/victronenergy/dbus-modbus-client/
 
 # Add "import OGP_G100" to /opt/victronenergy/dbus-modbus-client/dbus-modbus-client.py if not already present
 echo "Ensuring OGP_G100 is imported in dbus-modbus-client.py..."
@@ -31,5 +32,13 @@ fi
 # Remount rootfs as read-only
 echo "Remounting root filesystem as read-only..."
 mount -o remount,ro /
+
+# Start the placeholder status service (shows the device in the Venus OS device
+# list even when the hardware is not connected).
+# Kill any stale instance first (install.sh re-runs on every boot via rc.local).
+echo "Starting OGP G100 placeholder service..."
+pkill -f Virtual_OGP_Device.py 2>/dev/null || true
+mkdir -p /data/log
+nohup python3 /data/offgridpro/Virtual_OGP_Device.py >> /data/log/Virtual_OGP_Device.log 2>&1 &
 
 echo "OffGridPro G100 install script completed."
